@@ -11,10 +11,11 @@ class Creature:
         Creature._total_creatures += 1
 
     def send_on_mission(self):
-        self.in_refuge = False
+        self._in_refuge = False
     
     def return_to_refuge(self):
         self._in_refuge = True
 
     def __str__(self):
         return ("Frostbite the Dragon (origin: Nordic Realms) [in refuge]" if self._in_refuge else "Frostbite the Dragon (origin: Nordic Realms) [on mission]")
+
