@@ -23,3 +23,15 @@ class Creature:
     @staticmethod
     def is_valid_species(species: str):
         return True if species in Creature.VALID_SPECIES else False
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(data["name"], data["species"], data["origin"], data["power_level"])
+    @classmethod
+    def from_string(cls, text: str):
+        champs = text.split(",")
+        if len(champs) != 4:
+            raise ValueError(f"The text must contain exactly 4 fields separated by commas. (received: {len(champs)})")
+        name, species, origin, power_level = [c.strip() for c in champs]
+        
+        return cls(name, species, origin, int(power_level))
