@@ -6,7 +6,7 @@ class Creature:
         self.species = species
         self.origin = origin
         self.power_level = power_level
-        self.in_refuge = True
+        self._in_refuge = True
 
         Creature._total_creatures += 1
 
@@ -14,4 +14,7 @@ class Creature:
         self.in_refuge = False
     
     def return_to_refuge(self):
-        self.in_refuge = True
+        self._in_refuge = True
+
+    def __str__(self):
+        return ("Frostbite the Dragon (origin: Nordic Realms) [in refuge]" if self._in_refuge else "Frostbite the Dragon (origin: Nordic Realms) [on mission]")
