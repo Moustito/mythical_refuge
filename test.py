@@ -5,11 +5,5 @@ frostbite = Creature.from_dict(row)
 ember = Creature.from_string("Ember, Phoenix, Ashlands, 72")
 
 print(frostbite)
-print(ember.power_level + 1)
-print(Creature.is_valid_species("Griffin"), Creature.is_valid_species("Goblin"), Creature.is_valid_species("sous-Goblin"))
-print(Creature.get_total_creatures())
-
-try:
-    Creature.from_string("Grub, Goblin, Dark Caves, 12")
-except ValueError as error:
-    print(error)
+frostbite.send_on_mission()
+print(frostbite)
