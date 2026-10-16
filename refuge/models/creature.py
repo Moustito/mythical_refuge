@@ -18,7 +18,8 @@ class Creature:
         self._in_refuge = True
 
     def __str__(self):
-        return ("Frostbite the Dragon (origin: Nordic Realms) [in refuge]" if self._in_refuge else "Frostbite the Dragon (origin: Nordic Realms) [on mission]")
+        return f"{self.name} {self.species} (origin: {self.origin}) [in refuge]" if self._in_refuge else f"{self.name} {self.species} (origin: {self.origin}) [on mission]"
 
+    @staticmethod
     def is_valid_species(species: str):
-        return (True if species in VALID_SPECIES else False)
+        return True if species in Creature.VALID_SPECIES else False
