@@ -1,3 +1,5 @@
+from refuge.exceptions import ValidationError
+
 class Creature:
     # 1. Docstring
     # 2. Class Atributes
@@ -65,6 +67,9 @@ class Creature:
     # 7. Dunder methods
     def __str__(self):
         return f"{self.name} {self.species} (origin: {self.origin}) [{"in refuge" if self._in_refuge else "on mission"}]"
+    
+    def __repr__(self):
+        return f"Creature(name={self.name!r}, species={self.species!r}, origin={self.origin!r}, power_level={self.power_level!r})"
 
     # 8. Static methods
     @staticmethod
