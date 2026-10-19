@@ -93,6 +93,9 @@ class Creature(ABC):
     def return_to_refuge(self):
         self._in_refuge = True
 
+    def travel_mode() -> str:
+        return "on foot"
+
     # 7. Dunder methods
     def __str__(self):
         return f"{self.name} {self.species} (origin: {self.origin}) [{"in refuge" if self._in_refuge else "on mission"}]"
