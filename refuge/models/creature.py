@@ -57,7 +57,7 @@ class Creature:
     def origin(self):
         return self.__origin
 
-    # 6. public methods
+    # 6. public methods - instance methods
     def send_on_mission(self):
         self._in_refuge = False
     
@@ -76,7 +76,7 @@ class Creature:
     def is_valid_species(species: str) -> bool:
         return species in Creature.VALID_SPECIES
 
-    # 9. private methods
+    # 9. private methods - instance methods
 
 
 
