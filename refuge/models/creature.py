@@ -8,7 +8,7 @@ class Creature(ABC):
     VALID_SPECIES = ("Dragon", "Phoenix", "Unicorn", "Griffin", "Basilisk")
 
     # 3. __init__ instance attributes
-    def __init__(self, name, species, origin, power_level):
+    def __init__(self, name, species, origin, power_level, **kwargs):
         if not Creature.is_valid_species(species):
             raise ValidationError(f"Unknown species: {species!r}.")
 
@@ -19,6 +19,8 @@ class Creature(ABC):
         self._in_refuge = True
 
         Creature._total_creatures += 1
+
+        super().__init__(**kwargs)
 
     # 4. Alternate constructors
     @classmethod
@@ -88,13 +90,9 @@ class Creature(ABC):
         By default, no reason to refuse. The sub-classes can redifine.
         """
         return None
-
     
     def return_to_refuge(self):
         self._in_refuge = True
-
-    def travel_mode() -> str:
-        return "on foot"
 
     # 7. Dunder methods
     def __str__(self):
@@ -107,6 +105,10 @@ class Creature(ABC):
     @staticmethod
     def is_valid_species(species: str) -> bool:
         return species in Creature.VALID_SPECIES
+    
+    @staticmethod
+    def travel_mode() -> str:
+        return "on foot"
 
     # 9. private methods - instance methods
 

@@ -1,6 +1,7 @@
 from refuge.models.creature import Creature
+from refuge.models.mixins import FlyingMixin
 
-class Dragon(Creature):
+class Dragon(FlyingMixin, Creature):
     def __init__(self, name, origin, power_level, element, **kwargs):
         super().__init__(name, "Dragon", origin, power_level, **kwargs)
         self.element = element
@@ -14,7 +15,7 @@ class Dragon(Creature):
     def __repr__(self):
         return f"Dragon({super().__repr__()}, element={self.element!r})"
 
-class Phoenix(Creature):
+class Phoenix(FlyingMixin, Creature):
     def __init__(self, name, origin, power_level,**kwargs):
         super().__init__(name, "Phoenix", origin, power_level, **kwargs)
         self._resurrect = 0
@@ -47,7 +48,7 @@ class Unicorn(Creature):
         return None
             
 
-class Griffin(Creature):
+class Griffin(FlyingMixin, Creature):
     def __init__(self, name, origin, power_level, **kwargs):
         super().__init__(name, "Griffin", origin, power_level, **kwargs)
         
