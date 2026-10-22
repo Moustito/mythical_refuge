@@ -1,0 +1,104 @@
+Enum species_enum {
+  Dragon
+  Phoenix
+  Unicorn
+  Griffin
+  Basilisk
+}
+
+Enum employee_role {
+  handler
+  veterinarian
+}
+
+Enum health_status {
+  healthy
+  under_observation
+  in_treatment
+  quarantine
+}
+
+Table enclosures {
+  id serial [pk]
+  name varchar [not null, unique]
+  capacity integer [not null]
+
+  checks {
+    `capacity > 0` [name: 'enclosures_capacity_positive']
+  }
+}
+
+Table creatures {
+  id serial [pk]
+  name varchar [not null, unique]
+  species species_enum [not null]
+  origin varchar [not null]
+  power_level integer [not null]
+  element varchar [note: 'Dragons only, NULL for every other species']
+  resurrection_count integer [not null, default: 0]
+  in_refuge boolean [not null, default: true]
+  enclosure_id integer [ref: > enclosures.id, note: 'Optional: not housed yet']
+  registered_at timestamptz [not null, default: `now()`]
+
+  checks {
+    `power_level BETWEEN 0 AND 100` [name: 'creatures_power_level_range']
+    `resurrection_count >= 0` [name: 'creatures_resurrection_count_positive']
+    `element IS NULL OR species = 'Dragon'` [name: 'creatures_element_dragons_only']
+  }
+}
+
+Table employees {
+  id serial [pk]
+  full_name varchar [not null, unique, note: 'Unique: a simplification']
+  email varchar [not null, unique]
+  role employee_role [not null]
+  certification_level integer [note: '1 to 5, handlers only']
+  supervisor_id integer [ref: > employees.id, note: 'Optional: another employee']
+  hired_on date [not null, default: `current_date`]
+
+  checks {
+    `(role = 'handler' AND certification_level BETWEEN 1 AND 5) OR (role <> 'handler' AND certification_level IS NULL)` [name: 'employees_certification_handlers_only']
+  }
+}
+
+Table destinations {
+  id serial [pk]
+  name varchar [not null, unique]
+  danger_multiplier numeric(3,1) [not null, default: 1.0]
+
+  checks {
+    `danger_multiplier >= 1.0` [name: 'destinations_danger_multiplier_min']
+  }
+}
+
+Table missions {
+  id serial [pk]
+  creature_id integer [not null, ref: > creatures.id]
+  handler_id integer [not null, ref: > employees.id]
+  destination_id integer [not null, ref: > destinations.id]
+  departure_date date [not null]
+  duration_days integer [not null]
+  base_reward numeric(10,2) [not null]
+  returned_on date [note: 'NULL while the mission is ongoing']
+  notes text [not null, default: '']
+
+  indexes {
+    (creature_id, departure_date) [unique, name: 'missions_one_departure_per_day']
+  }
+
+  checks {
+    `duration_days > 0` [name: 'missions_duration_positive']
+    `base_reward >= 0` [name: 'missions_reward_positive']
+    `returned_on IS NULL OR returned_on >= departure_date` [name: 'missions_return_after_departure']
+  }
+}
+
+Table health_records {
+  id serial [pk]
+  creature_id integer [not null, ref: > creatures.id]
+  vet_id integer [not null, ref: > employees.id]
+  examined_on date [not null, default: `current_date`]
+  status health_status [not null]
+  diagnosis text [not null]
+  treatment text [not null, default: '']
+}
