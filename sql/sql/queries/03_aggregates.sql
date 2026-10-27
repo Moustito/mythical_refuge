@@ -40,6 +40,7 @@ SELECT
 FROM employees e
 LEFT JOIN missions m ON m.handler_id = e.id
 GROUP BY e.id, e.full_name
+<<<<<<< HEAD
 HAVING COUNT(m.id) >= 3;
 
 -- Earnings. Reward earned per creature on completed missions (base reward × danger multiplier), highest first.
@@ -51,3 +52,6 @@ JOIN creatures c ON c.id = m.creature_id
 JOIN destinations d ON d.id = m.destination_id
 WHERE m.returned_on IS NOT NULL
 ORDER BY earned_reward DESC;
+=======
+HAVING COUNT(m.id) >= 3;
+>>>>>>> 73584b32e5547621d9d3f2683e4e61b91899df83
