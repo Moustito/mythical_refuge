@@ -11,6 +11,9 @@ class Dragon(FlyingMixin, Creature):
     
     def special_ability(self) -> str:
         return f"{self.name} breathes {self.element} and flies at great speed."
+
+    def __str__(self):
+        return f"{super().__str__()} - element: {self.element}"
     
     def __repr__(self):
         return f"Dragon({super().__repr__()}, element={self.element!r})"
