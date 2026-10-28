@@ -4,3 +4,6 @@ class RefugeError(Exception):
 
 class ValidationError(RefugeError):
     """Levée lorsqu'une donnée métier est invalide (espèce inconnue, puissance incorrecte, etc.)."""
+
+class MissionRefusedError(RefugeError):
+    """ """

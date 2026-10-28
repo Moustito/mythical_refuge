@@ -1,13 +1,14 @@
-from refuge.exceptions import ValidationError
+from refuge.exceptions import ValidationError, MissionRefusedError
+from abc import ABC, abstractmethod
 
-class Creature:
+class Creature(ABC):
     # 1. Docstring
     # 2. Class Atributes
     _total_creatures = 0
     VALID_SPECIES = ("Dragon", "Phoenix", "Unicorn", "Griffin", "Basilisk")
 
     # 3. __init__ instance attributes
-    def __init__(self, name, species, origin, power_level):
+    def __init__(self, name, species, origin, power_level, **kwargs):
         if not Creature.is_valid_species(species):
             raise ValidationError(f"Unknown species: {species!r}.")
 
@@ -18,6 +19,8 @@ class Creature:
         self._in_refuge = True
 
         Creature._total_creatures += 1
+
+        super().__init__(**kwargs)
 
     # 4. Alternate constructors
     @classmethod
@@ -57,9 +60,36 @@ class Creature:
     def origin(self):
         return self.__origin
 
+    @abstractmethod
+    def mission_duration_days() -> int:
+        """Send in day the mission duration"""
+
+    @abstractmethod
+    def special_ability() -> str:
+        """Send the name of special ability"""
+
     # 6. public methods - instance methods
     def send_on_mission(self):
+        """
+        Send a creature on mission.
+        Raises MissionRefusedError when the creature cannot leave.
+        """
+        if not self._in_refuge:
+            raise MissionRefusedError(f"{self.name} is already on a mission.")
+        
+        reason = self.refusal_reason()
+        if reason is not None:
+            raise MissionRefusedError(reason)
+        
         self._in_refuge = False
+
+    def refusal_reason(self) -> str | None:
+        """
+        Hook : send a refuse message, or None if the creature can leave.
+
+        By default, no reason to refuse. The sub-classes can redifine.
+        """
+        return None
     
     def return_to_refuge(self):
         self._in_refuge = True
@@ -75,8 +105,13 @@ class Creature:
     @staticmethod
     def is_valid_species(species: str) -> bool:
         return species in Creature.VALID_SPECIES
+    
+    @staticmethod
+    def travel_mode() -> str:
+        return "on foot"
 
     # 9. private methods - instance methods
+
 
 
 
