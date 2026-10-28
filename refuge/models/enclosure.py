@@ -82,8 +82,10 @@ class Enclosure():
     def __len__(self):
         return len(self._creatures)
 
-    def __contains__(self, name):
-        return any(c.name == name for c in self._creatures)
+    def __contains__(self, item) -> bool:
+        if isinstance(item, str):
+            return any(c.name == item for c in self._creatures)
+        return item in self._creatures
 
     def __iter__(self):
         for creature in self._creatures:
