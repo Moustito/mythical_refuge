@@ -1,4 +1,5 @@
 from refuge.exceptions import ValidationError, EnclosureFullError, IncompatibleSpeciesError
+from refuge.models.creature import Creature
 
 class Enclosure():
     INCOMPATIBLE_PAIRS = frozenset({"Dragon", "Unicorn"}, {"Basilisk", "Phoenix"}, {"Basilisk", "Unicorn"})
@@ -51,3 +52,20 @@ class Enclosure():
             return True
         except (ValidationError, EnclosureFullError, IncompatibleSpeciesError):
             return False
+
+    def remove(self, name: str) -> Creature:
+        '''Remove and return a creature from the enclosure by its name.
+
+        Args:
+            name (str): The name of the creature to remove.
+
+        Returns:
+            Creature: The removed creature object.
+
+        Raises:
+            ValidationError: If no creature with this name is found in the enclosure.'''
+        for creature in self._creature:
+             if creature.name == name:
+                  self._creatures.remove(creature)
+                  return creature
+        raise ValidationError(f"{name} is not in {self.name}.")
