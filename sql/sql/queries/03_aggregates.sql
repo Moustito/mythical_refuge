@@ -40,7 +40,6 @@ SELECT
 FROM employees e
 LEFT JOIN missions m ON m.handler_id = e.id
 GROUP BY e.id, e.full_name
-<<<<<<< HEAD
 HAVING COUNT(m.id) >= 3;
 
 -- Earnings. Reward earned per creature on completed missions (base reward × danger multiplier), highest first.
@@ -52,6 +51,26 @@ JOIN creatures c ON c.id = m.creature_id
 JOIN destinations d ON d.id = m.destination_id
 WHERE m.returned_on IS NOT NULL
 ORDER BY earned_reward DESC;
-=======
-HAVING COUNT(m.id) >= 3;
->>>>>>> 73584b32e5547621d9d3f2683e4e61b91899df83
+
+-- Monthly activity. For each month: number of missions and total reward (DATE_TRUNC).
+SELECT 
+    DATE_TRUNC('month', departure_date) AS mission_month,
+    COUNT(*) AS total_missions,
+    SUM(base_reward) AS total_reward
+FROM missions
+GROUP BY mission_month
+ORDER BY mission_month;
+
+-- COUNT(*) vs COUNT(column). In one query, count all missions and count returned_on.
+SELECT 
+    COUNT(m.id) AS nbr_missions,
+    COUNT(m.returned_on) AS returned_on
+FROM missions m
+
+-- Destinations. Total reward per destination over all missions, showing 0 for destinations never visited.
+SELECT 
+    d.name,
+    COALESCE(SUM(base_reward)::INTEGER, '0') AS total_reward
+FROM destinations d
+LEFT JOIN missions m ON m.destination_id = d.id
+GROUP BY d.name, d.id
