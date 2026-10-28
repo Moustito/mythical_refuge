@@ -1,4 +1,4 @@
-from refuge.exceptions import ValidationError
+from refuge.exceptions import ValidationError, EnclosureFullError, IncompatibleSpeciesError
 
 class Enclosure():
     INCOMPATIBLE_PAIRS = frozenset({"Dragon", "Unicorn"}, {"Basilisk", "Phoenix"}, {"Basilisk", "Unicorn"})
@@ -24,3 +24,15 @@ class Enclosure():
     def species(self) -> set[str]:
         '''Return all unique species present in the enclosure.'''
         return {creature.species for creature in self._creatures}
+
+    def add(self, creature):
+        if any(c.name == creature.name for c in self._creatures):
+            raise ValidationError(f"{creature.name} is already in {self.name}.")
+        
+        if Enclosure.is_full(self):
+            raise EnclosureFullError(f"{self.name} is full ({len(self._creatures)}/{self.capacity}).")
+        
+        for existing_creature in self._creatures:
+            pair = frozenset({existing_creature.species, creature.species})
+            if pair in self.INCOMPATIBLE_PAIRS:
+                raise IncompatibleSpeciesError(f"A {creature.species} cannot live with a {existing_creature.species} in {self.name}.")
