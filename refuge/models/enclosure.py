@@ -25,20 +25,11 @@ class Enclosure():
         '''Return all unique species present in the enclosure.'''
         return {creature.species for creature in self._creatures}
 
-    def add(self, creature):
-        '''Add a creature to the enclosure after validating constraints.
-
-        Args:
-            creature (Creature): The creature to be added.
-
-        Raises:
-            ValidationError: If a creature with the same name already exists in the enclosure.
-            EnclosureFullError: If the enclosure has reached its maximum capacity.
-            IncompatibleSpeciesError: If the creature's species is incompatible with any existing resident.
-        '''
+    def _Validate_creature(self, creature) -> None:
+        '''Private helper that checks all constraints and raises specific errors if invalid.'''
         if any(c.name == creature.name for c in self._creatures):
-            raise ValidationError(f"{creature.name} is already in {self.name}.")
-        
+                    raise ValidationError(f"{creature.name} is already in {self.name}.")
+                
         if Enclosure.is_full(self):
             raise EnclosureFullError(f"{self.name} is full ({len(self._creatures)}/{self.capacity}).")
         
@@ -47,4 +38,16 @@ class Enclosure():
             if pair in self.INCOMPATIBLE_PAIRS:
                 raise IncompatibleSpeciesError(f"A {creature.species} cannot live with a {existing_creature.species} in {self.name}.")
 
+    def add(self, creature):
+        '''Add a creature to the enclosure after validating constraints.'''
+        self._Validate_creature(creature)
+
         self._creatures.append(creature)
+
+    def can_accept(self, creature) -> bool:
+        """Check if the enclosure can accept the creature without raising exceptions."""
+        try:
+            self._validate_creature(creature)
+            return True
+        except (ValidationError, EnclosureFullError, IncompatibleSpeciesError):
+            return False
