@@ -7,3 +7,9 @@ class ValidationError(RefugeError):
 
 class MissionRefusedError(RefugeError):
     """ """
+
+class EnclosureFullError(RefugeError):
+    '''Raise an error when the enclosure is full'''
+
+class IncompatibleSpeciesError(RefugeError):
+    '''Raise an error when a species incompatibility is detected in an enclosure.'''
