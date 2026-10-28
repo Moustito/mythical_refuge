@@ -11,6 +11,7 @@ class Enclosure():
         self.capacity = capacity
         self._creatures: list = []
 
+    
     @property
     def free_slots(self) -> int:
         '''Calculate the number of free slots in an enclosure.'''
@@ -69,3 +70,24 @@ class Enclosure():
                   self._creatures.remove(creature)
                   return creature
         raise ValidationError(f"{name} is not in {self.name}.")
+
+
+    def __len__(self):
+        return len(self._creatures)
+
+    def __contains__(self, name):
+        return any(c.name == name for c in self._creatures)
+
+    def __iter__(self):
+        for creature in self._creatures:
+            yield creature
+ 
+    def __getitem__(self, name: str):
+        for creature in self._creatures:
+            if creature.name == name:
+                return creature
+        raise KeyError(f"No creature named '{name}' found in {self.name}.")
+
+    def __repr__(self):
+        creature_name = [c.name for c in self._creatures]
+        return f"Enclosure({self.name}, {len(self._creatures)}/{self.capacity}: {creature_name})"
