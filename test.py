@@ -1,22 +1,35 @@
-from refuge.models.creature import Creature
-from refuge.models.employee import Employee, Handler, Veterinarian
-from refuge.models.species import Dragon, Phoenix, Unicorn, Griffin, Basilisk
-from refuge.models.mixins import FlyingMixin
-from playground.playground  import send_to_field
-from refuge.exceptions import ValidationError
+from refuge.models.enclosure import Enclosure
+from refuge.models.species import Dragon, Unicorn, Basilisk, Griffin
+from refuge.exceptions import EnclosureFullError, IncompatibleSpeciesError
 
-aldric = Handler("Aldric Stone", "aldric@refuge.example", 5)
-brynn = Handler("Brynn Ashford", "brynn@refuge.example", 3)
-dara = Veterinarian("Dara Quill", "dara@refuge.example")
-frostbite = Dragon("Frostbite", "Nordic Realms", 95, "ice")
+caves = Enclosure("Ember Caves", 3)
+caves.add(Dragon("Frostbite", "Nordic Realms", 95, "ice"))
+caves.add(Dragon("Ignis", "Volcanic Depths", 88, "fire"))
 
-for employee in (aldric, brynn, dara):
-    print(employee, "|", employee.describe_duties())
-print([e.full_name for e in (aldric, brynn, dara) if e.can_escort(frostbite)])
-print(dara.can("perform_checkup"), brynn.can("perform_checkup"))
-print(dara.perform_checkup(Basilisk("Gorgo", "Serpent Marsh", 91), "quarantine", "Unstable petrifying gaze"))
+print(len(caves))
+print("Frostbite" in caves, "Ember" in caves)
+print(caves["Ignis"])
+print(repr(caves))
+for creature in caves:
+    print(creature.name, "-", creature.travel_mode())
 
 try:
-    Handler("Cael Morrow", "cael@refuge.example", 7)
-except ValidationError as error:
-    print(error)
+    caves.add(Unicorn("Stardust", "Silver Woods", 45))
+except IncompatibleSpeciesError as error:
+    print("IncompatibleSpeciesError:", error)
+
+caves.add(Basilisk("Gorgo", "Serpent Marsh", 91))
+print(caves.is_full, caves.free_slots)
+
+try:
+    caves.add(Dragon("Cinder", "Ashlands", 60, "fire"))
+except EnclosureFullError as error:
+    print("EnclosureFullError:", error)
+
+try:
+    caves["Ember"]
+except KeyError as error:
+    print("KeyError:", error)
+
+print(caves.remove("Ignis").name, repr(caves))
+print(caves.can_accept(Unicorn("Pebble", "Misty Hills", 25)), caves.can_accept(Griffin("Talon", "Eagle Peaks", 80)))
