@@ -2,7 +2,12 @@ from refuge.exceptions import ValidationError, EnclosureFullError, IncompatibleS
 from refuge.models.creature import Creature
 
 class Enclosure():
-    INCOMPATIBLE_PAIRS = frozenset({"Dragon", "Unicorn"}, {"Basilisk", "Phoenix"}, {"Basilisk", "Unicorn"})
+    INCOMPATIBLE_PAIRS = frozenset({
+        frozenset({"Dragon", "Unicorn"}),
+        frozenset({"Basilisk", "Phoenix"}),
+        frozenset({"Basilisk", "Unicorn"})
+    })
+    
     def __init__(self, name: str, capacity: int):
         if capacity <= 0:
             raise ValidationError(f"Enter a capacity greater than 0. Got: {capacity}.")
@@ -11,7 +16,7 @@ class Enclosure():
         self.capacity = capacity
         self._creatures: list = []
 
-    
+    #Properties
     @property
     def free_slots(self) -> int:
         '''Calculate the number of free slots in an enclosure.'''
@@ -27,12 +32,13 @@ class Enclosure():
         '''Return all unique species present in the enclosure.'''
         return {creature.species for creature in self._creatures}
 
-    def _Validate_creature(self, creature) -> None:
+    #Pricate helper
+    def _validate_creature(self, creature) -> None:
         '''Private helper that checks all constraints and raises specific errors if invalid.'''
         if any(c.name == creature.name for c in self._creatures):
                     raise ValidationError(f"{creature.name} is already in {self.name}.")
                 
-        if Enclosure.is_full(self):
+        if self.is_full:
             raise EnclosureFullError(f"{self.name} is full ({len(self._creatures)}/{self.capacity}).")
         
         for existing_creature in self._creatures:
@@ -40,9 +46,10 @@ class Enclosure():
             if pair in self.INCOMPATIBLE_PAIRS:
                 raise IncompatibleSpeciesError(f"A {creature.species} cannot live with a {existing_creature.species} in {self.name}.")
 
+    # public method
     def add(self, creature):
         '''Add a creature to the enclosure after validating constraints.'''
-        self._Validate_creature(creature)
+        self._validate_creature(creature)
 
         self._creatures.append(creature)
 
@@ -65,13 +72,13 @@ class Enclosure():
 
         Raises:
             ValidationError: If no creature with this name is found in the enclosure.'''
-        for creature in self._creature:
+        for creature in self._creatures:
              if creature.name == name:
                   self._creatures.remove(creature)
                   return creature
         raise ValidationError(f"{name} is not in {self.name}.")
 
-
+    #Dunder method
     def __len__(self):
         return len(self._creatures)
 
