@@ -11,7 +11,7 @@ class Enclosure():
         self._creatures: list = []
 
     @property
-    def free_slots(self) -> str:
+    def free_slots(self) -> int:
         '''Calculate the number of free slots in an enclosure.'''
         return self.capacity - len(self._creatures)
 
@@ -26,6 +26,16 @@ class Enclosure():
         return {creature.species for creature in self._creatures}
 
     def add(self, creature):
+        '''Add a creature to the enclosure after validating constraints.
+
+        Args:
+            creature (Creature): The creature to be added.
+
+        Raises:
+            ValidationError: If a creature with the same name already exists in the enclosure.
+            EnclosureFullError: If the enclosure has reached its maximum capacity.
+            IncompatibleSpeciesError: If the creature's species is incompatible with any existing resident.
+        '''
         if any(c.name == creature.name for c in self._creatures):
             raise ValidationError(f"{creature.name} is already in {self.name}.")
         
@@ -36,3 +46,5 @@ class Enclosure():
             pair = frozenset({existing_creature.species, creature.species})
             if pair in self.INCOMPATIBLE_PAIRS:
                 raise IncompatibleSpeciesError(f"A {creature.species} cannot live with a {existing_creature.species} in {self.name}.")
+
+        self._creatures.append(creature)
